@@ -13,14 +13,20 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 const allowedOrigins = [
-    'https://silly-eclair-f4596a.netlify.app', // your Netlify frontend
-    'http://localhost:5173', // your local frontend
-  ];
-  
-  app.use(cors({
-    origin: allowedOrigins,
-    credentials: true,
-  }));
+  'https://silly-eclair-f4596a.netlify.app', // Netlify domain
+  'http://localhost:5173' // local dev domain (if you test locally)
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true
+}));
 app.use(express.json());
 app.use(cookieParser());
 
